@@ -12,69 +12,74 @@ import org.apache.spark.sql.SparkSession
 
 /**
   * Description：离线统计（新增用户，活跃用户，次日留存率）→ Spark Core版本<br/>
-  * Copyright (c) ，2019 ，Young <br/>
+  * Copyright (c) ，2019 ， Jansonxu <br/>
   * This program is protected by copyright laws. <br/>
-  * Date： 2019-12-05
+  * Date： 2019年12月03日
   *
-  * @author 李金宜
+  * @author 徐文波
+  * @version : 1.0
   */
 object HotBloodOfflineCal {
 
 
   def main(args: Array[String]): Unit = {
-    //步骤:
+    //步骤：
+    //①拦截非法的参数
+    if (args == null || args.length != 1) {
+      println(
+        """
+          |警告！
+          |请录入参数！ <基准日>，如：2018-02-01
+          |
+        """.stripMargin)
+      sys.exit(-1)
+    }
 
-    //(1)拦截非法参数
-      if(args == null || args.length != 1) {
-        println(
-          """
-            |警告!
-            |请录入参数!<基准日>,如:2018-02-01
-            |
-          """.stripMargin)
-        sys.exit(-1)
-      }
-    //(2)获得参数(基准日)
-      val Array(baseDate) = args
-      //print(s"基准日:$baseDate")
 
-    //(3)SparkSession
-      val spark = SparkSession
-      .builder()
+    //②获得参数（基准日）
+    val Array(baseDate) = args
+
+
+    //print(s"基准日：$baseDate")
+
+    //③SparkSession
+    val spark = SparkSession
+      .builder
       .master("local[*]")
       .appName(this.getClass.getSimpleName)
-      .config("es.nodes","master,slave1,slave2")
-      .config("port","9200")
-      .getOrCreate()
+      .config("es.nodes", "node01,node02,node03")
+      .config("port", "9200")
+      .getOrCreate
 
-      val sc = spark.sparkContext
+    val sc = spark.sparkContext
 
     //将基准日信息封装到广播变量中
-      val bcBaseDate = sc.broadcast(baseDate)
+    val bcBaseDate = sc.broadcast(baseDate)
 
-    //(4)从ES中读取数据,并cache
+    //④从ES中读取数据，并cache
     val rddFromES: RDD[(String, String, String, String)] = readDataFromES(sc)
 
-    //(5)分别计算指标
+
+    // ⑤分别计算指标
     //a)新增用户数
-    val newUserRDD: RDD[(String,String)] = calNewAddUser(sc , rddFromES , bcBaseDate).cache
+    val newUserRDD: RDD[(String, String)] = calNewAddUser(sc, rddFromES, bcBaseDate).cache
     val newUserCnt = newUserRDD.count()
-    println(s"新增用户数是:$newUserCnt")
+    println(s"新增用户数是：$newUserCnt")
 
     //b)活跃用户数
-    val activeUserCnt :Long = calActiveUser(sc , rddFromES ,bcBaseDate)
-    println(s"活跃用户数是:$activeUserCnt")
+    val activeUserCnt: Long = calActiveUser(sc, rddFromES, bcBaseDate)
+    println(s"活跃用户数是：$activeUserCnt")
 
     //c)次日留存率 = (基准日注册的用户RDD join 次日登录的用户RDD).count / 基准日注册的用户数
-    val nextDayStayRate:Double = calNextDayStayRate(sc, newUserCnt, newUserRDD, rddFromES, bcBaseDate)
-    println(f"次日留存率是: ${nextDayStayRate * 100}%.2f".concat("%"))
+    val nextDayStayRate: Double = calNextDayStayRate(sc, newUserCnt, newUserRDD, rddFromES, bcBaseDate)
+    println(f"次日留存率是：${nextDayStayRate * 100}%.2f".concat("%"))
 
-    //(6)将计算后的结果落地到RDBMS中固化起来
+    //⑥将计算后的结果落地到RDBMS中固化起来
 
-    //(7)资源释放
-      spark.stop()
-
+    //⑦资源释放
+    spark.stop
   }
+
 
   /**
     * 计算次日留存率
@@ -273,7 +278,5 @@ object HotBloodOfflineCal {
 
     //返回
     rddFromES
-
-
   }
 }

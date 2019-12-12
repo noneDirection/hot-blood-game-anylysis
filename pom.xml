@@ -6,7 +6,7 @@
     <version>1.0-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>My wonderfull scala app</description>
-    <inceptionYear>2019</inceptionYear>
+    <inceptionYear>2010</inceptionYear>
     <licenses>
         <license>
             <name>My License</name>
@@ -26,6 +26,9 @@
         <elasticsearch.version>6.5.3</elasticsearch.version>
 
         <jedis.version>2.9.0</jedis.version>
+
+        <flink.version>1.7.0</flink.version>
+
     </properties>
 
     <!--
@@ -174,6 +177,132 @@
             <version>3.7</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-sql-kafka-0-10_2.11</artifactId>
+            <version>2.2.3</version>
+        </dependency>
+
+
+        <!-- ====================== flink相关依赖========================== -->
+
+        <!--  ok -->
+
+        <dependency>
+            <groupId>org.apache.calcite</groupId>
+            <artifactId>calcite-core</artifactId>
+            <!-- When updating the Calcite version, make sure to update the dependency exclusions -->
+            <version>1.17.0</version>
+            <exclusions>
+                <!-- Dependencies that are not needed for how we use Calcite right now -->
+                <exclusion>
+                    <groupId>org.apache.calcite.avatica</groupId>
+                    <artifactId>avatica-metrics</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.google.protobuf</groupId>
+                    <artifactId>protobuf-java</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpcore</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-dbcp</groupId>
+                    <artifactId>commons-dbcp</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table-common</artifactId>
+            <version>${flink.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--       <dependency>
+                     <groupId>org.apache.flink</groupId>
+                     <artifactId>flink-table-planner_2.11</artifactId>
+                     <version>${flink.version}</version>
+                     <scope>provided</scope>
+                 </dependency>
+
+
+                 <dependency>
+                 <groupId>org.apache.flink</groupId>
+                 <artifactId>flink-table-api-scala-bridge_2.11</artifactId>
+                 <version>${flink.version}</version>
+                 <scope>provided</scope>
+                 </dependency>-->
+
+        <!-- ok -->
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-table_2.11</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-scala_2.11</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-streaming-scala_2.11</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-kafka-0.11_2.11</artifactId>
+            <version>${flink.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-clients_2.11</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-core -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-core</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.flink/flink-runtime -->
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-runtime_2.11</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.flink</groupId>
+            <artifactId>flink-connector-wikiedits_2.11</artifactId>
+            <version>${flink.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -247,3 +376,4 @@
         </plugins>
     </reporting>
 </project>
+

@@ -16,15 +16,20 @@ import org.apache.spark.sql.SparkSession
 import scala.collection.mutable.ArrayBuffer
 
 /**
-  * Description：XXXX<br/>
-  * Copyright (c) ，2019 ，Young <br/>
+  * Description：离线统计（新增用户，活跃用户，次日留存率~七日留存率）→ Spark Core优化版<br/>
+  * Copyright (c) ，2019 ， Jansonxu <br/>
   * This program is protected by copyright laws. <br/>
-  * Date： 2019-12-05
+  * Date： 2019年12月03日
   *
-  * @author 李金宜
+  * @author 徐文波
+  * @version : 1.0
   */
 object HotBloodOfflineCal2 {
+
   def main(args: Array[String]): Unit = {
+    //记录开始时间
+    val beginTime = System.currentTimeMillis
+
     //步骤：
     //①拦截非法的参数
     if (args == null || args.length != 1) {
@@ -41,7 +46,6 @@ object HotBloodOfflineCal2 {
     //②获得参数（基准日）
     val Array(baseDate) = args
 
-
     //print(s"基准日：$baseDate")
 
     //③SparkSession
@@ -53,7 +57,7 @@ object HotBloodOfflineCal2 {
 
     //④从ES中读取数据，并cache
     val rddFromES: RDD[(String, String, String, String)] = readDataFromES(sc)
-
+    println(rddFromES.collect().toList)
 
     // ⑤分别计算指标
     //a)新增用户数
@@ -80,6 +84,12 @@ object HotBloodOfflineCal2 {
 
     //⑦资源释放
     spark.stop
+
+
+    //记录结束时间
+    val endTime = System.currentTimeMillis
+    println(s"Spark Core，使用RDD算子书写，一共耗时：${endTime - beginTime}毫秒")
+    //→ Spark Core，使用RDD算子书写，一共耗时：14372毫秒
   }
 
 
