@@ -27,7 +27,7 @@
 
         <jedis.version>2.9.0</jedis.version>
 
-        <flink.version>1.7.0</flink.version>
+        <flink.version>1.9.2</flink.version>
 
     </properties>
 
